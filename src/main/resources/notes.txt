@@ -1,0 +1,24 @@
+
+Framework for artificial life - Hadrien Devichi
+
+Faire un make clonable, qui au lieu d'ajouter un main qui duplique le fichier,
+ajouter une methode clone dont l'appel clone la classe dans son état courant.
+
+Ensuite, faire mutate qui permet à partir de clone, de faire un mutation tout
+en gardant la possibilité de se cloner.
+
+Ensuite, reflechir au code génétique et à l'évolution.
+
+nommer les classes: nom _ generation
+une methode qui peut trouver la derniere evolution d'une classe?
+
+comment faire pour que le clone compile toujours.
+mettre dans le source, en static final, le numero de version.
+
+*2 BUGS ds make reproducing
+
+-- rechercher si autres caractere s a escaper que \ et "
+
+possibilité de dupliquer le bytecode...
+
+

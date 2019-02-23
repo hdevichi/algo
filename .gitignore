@@ -1,4 +1,4 @@
 .idea
 /algo.iml
 .settings
-bin
+java/bin

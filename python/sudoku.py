@@ -89,23 +89,20 @@ class Sudoku:
             print('Invalid start solution for solve!')
             return
 
-        try:
-            self.recursiveSolve()
-            print('No solution found.')
-        except:
+        result = self.recursiveSolve()
+        if result:
             print('Solution found !')
             print(self.board)
-            pass
-
+        else:
+            print('No solution found.')
         
-
     def recursiveSolve(self):
 
         if self.isValid() == False:
-            return
+            return False
 
         if self.empty == 0:
-            raise Exception('Found')
+            return True
         
         # find next most constrained position (candidate)
         candidatePosition = (0,0)
@@ -123,8 +120,12 @@ class Sudoku:
         
         for value in valid:
             self.setPosition(candidatePosition[0], candidatePosition[1], value)
-            self.recursiveSolve()
+            result = self.recursiveSolve()
+            if result:
+                return True
             self.clearPosition(candidatePosition[0], candidatePosition[1])
+        
+        return False
 
 
 if __name__ == '__main__':
@@ -144,6 +145,6 @@ if __name__ == '__main__':
     start = datetime.datetime.now()
     grille.solve()
     end = datetime.datetime.now()
-    duration = (end-start).total_seconds() * 1000 * 1000
-    print('Solved in '+str(duration)+ ' µs')
+    duration = (end-start).total_seconds() * 1000 
+    print('Solved in '+str(duration)+ ' ms')
     

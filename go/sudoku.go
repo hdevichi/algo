@@ -117,23 +117,25 @@ func solve() {
 		return
 	}
 
-	recursiveSolve()
-	fmt.Println("No solution found.")
-}
-
-func recursiveSolve() {
-
-	if isValid() == false {
-		return
-	}
-
-	if empty == 0 {
+	result := recursiveSolve()
+	if result {
 		fmt.Println("Solution found !")
 		for line := 0; line < height; line++ {
 			fmt.Println(values[line])
 		}
-		//os.Exit(0)
-		panic("Solution Found")
+	} else {
+		fmt.Println("No solution found.")
+	}
+}
+
+func recursiveSolve() bool {
+
+	if isValid() == false {
+		return false
+	}
+
+	if empty == 0 {
+		return true
 	}
 
 	// find next most constrained position (candidate)
@@ -157,9 +159,14 @@ func recursiveSolve() {
 
 	for _, value := range valid {
 		setPosition(candidateX, candidateY, value)
-		recursiveSolve()
+		result := recursiveSolve()
+		if result {
+			return true
+		}
 		clearPosition(candidateX, candidateY)
 	}
+
+	return false
 }
 
 func timeTrack(start time.Time, name string) {

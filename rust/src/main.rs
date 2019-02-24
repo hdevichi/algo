@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 const HEIGHT : usize = 9;
 const WIDTH : usize = 9;
 const SIZE : usize = HEIGHT * WIDTH;
@@ -116,26 +118,29 @@ fn solve(board : &mut Sudoku) {
 	if is_valid(board) == false {
 		println!("Invalid start solution for solve!");
 	} else {
-    	recursive_solve(board);
-    	println!("No solution found.");
+    	let result = recursive_solve(board);
+    	if result {
+			println!("Solution found !");
+			for y in 0..HEIGHT {
+            	for x in 0..WIDTH {
+			    	print!("{} ",board.values[y * WIDTH + x]);
+            	}
+            	println!("");
+			}
+		} else {
+			println!("No solution found.");
+		}
     }
 }
 
-fn recursive_solve(board : &mut Sudoku) {
+fn recursive_solve(board : &mut Sudoku) -> bool {
 
 	if is_valid(board) == false {
-		return
+		return false;
 	}
 
 	if board.empty == 0 {
-		println!("Solution found !");
-		for y in 0..HEIGHT {
-            for x in 0..WIDTH {
-			    print!("{} ",board.values[y * WIDTH + x])
-            }
-            println!("")
-		}
-		std::process::exit(0);
+		return true;
 	}
 
 	// find next most constrained position (candidate)
@@ -160,13 +165,19 @@ fn recursive_solve(board : &mut Sudoku) {
 
 	for value in valid {
 		set_position(board, candidate_x, candidate_y, value);
-		recursive_solve(board);
+		let result = recursive_solve(board);
+		if result {
+			return true;
+		}
 		clear_position(board, candidate_x, candidate_y);
 	}
+	return false;
 }
 
 fn main() {
     
+	let start = Instant::now();
+
 	let mut board = init_board([
 		0, 0, 0, 0, 0, 0, 0, 0, 0,
 		9, 1, 4, 5, 7, 0, 0, 2, 6,
@@ -180,4 +191,7 @@ fn main() {
         ]);
 
 	solve(&mut board);
+
+	let end = Instant::now();
+	println!("Solution found in {:?}", end.duration_since(start));
 }

@@ -2,7 +2,28 @@ package sudoku;
 
 public class ExempleBoards {
 
-	public static Board getBoardEasy1() {
+
+	public static Board getBoardTimingSample() {
+
+		int[][] values = {
+				{0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{9, 1, 4, 5, 7, 0, 0, 2, 6},
+				{5, 2, 8, 6, 0, 1, 4, 9, 0},
+				{0, 0, 0, 0, 0, 3, 2, 0, 4},
+				{0, 6, 3, 1, 0, 9, 5, 7, 0},
+				{8, 0, 1, 2, 0, 0, 0, 0, 3},
+				{0, 5, 2, 7, 0, 4, 0, 0, 9},
+				{6, 3, 0, 9, 0, 0, 8, 4, 0},
+				{4, 0, 0, 3, 2, 0, 0, 5, 0}
+		};
+		Board b = new Board(values);
+		return b;
+	}
+
+	
+
+
+public static Board getBoardEasy1() {
 		
 		int[][] values = {
 				{4, 1, 0, 8, 0, 3, 0, 6, 9},

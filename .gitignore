@@ -2,3 +2,4 @@
 /algo.iml
 .settings
 java/bin
+rust/target

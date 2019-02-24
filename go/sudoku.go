@@ -97,14 +97,13 @@ func isValid() bool {
 func computeValidValuesForPosition(x, y int) []int {
 
 	value := getPosition(x, y)
-	if value != -1 {
-		return []int{}
-	}
-
 	valid := []int{}
-	for candidate := 1; candidate < 10; candidate++ {
-		if isValueValid(x, y, candidate) {
-			valid = append(valid, candidate)
+
+	if value == -1 {
+		for candidate := 1; candidate < 10; candidate++ {
+			if isValueValid(x, y, candidate) {
+				valid = append(valid, candidate)
+			}
 		}
 	}
 

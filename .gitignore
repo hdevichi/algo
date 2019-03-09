@@ -3,4 +3,8 @@
 .settings
 java/bin
 java/out
+java/target
+java/.classpath
+java/.project
+.vscode
 rust/target

@@ -110,7 +110,7 @@ public class SudokuSolver {
 	
 	private int[] getValidCandidates(Board board, Move move) {
 		
-		// TODO calculé 2 fois
+		// TODO calcul√© 2 fois
 		Set<Integer> constraints = getConstraintListOnCell(board, move.getX(), move.getY());
 		
 		int[] possible = new int[9-constraints.size()];

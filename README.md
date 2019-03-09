@@ -4,10 +4,15 @@ This project contains algorithmic exercises
 * sudoku solver (in multiple languages)
 
 Comparisons : Sudoku Solver runs in about
- * 50ms in python (48-52)
- * 15ms sec in java (12-17) [ sur le mac ; 2 - 6 sur PC]
- * 550 µs in go (550-800)
- * 450 µs in rust (450-900)
+
+| Language        | Mac (mac book pro 13'' 2016 | PC (core i7 8th gen)    |
+| ------------- |:-------------:| -----:|
+| Python 3      | 50 ms (48-52) |  35 ms                         |
+| Java 8        |     15ms sec (12-17)           | 2 - 6 ms      |
+| Go            | 550  µs (500 - 800)| 420 µs (410 - 440)|
+| Rust          | 450 µs in rust (450-900)| |
+
+
 
  To run from command line : 
 
@@ -18,3 +23,7 @@ Comparisons : Sudoku Solver runs in about
 (ou mvn exec:java -Dexec.mainClass="sudoku.SudokuSolver")
 
 note: sous windows le sous système linux semble plus rapide en ligne de commande.
+
+Go :
+cd go
+go run sudoku.go

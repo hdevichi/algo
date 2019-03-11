@@ -130,10 +130,6 @@ func solve() {
 
 func recursiveSolve() bool {
 
-	if isValid() == false {
-		return false
-	}
-
 	if empty == 0 {
 		return true
 	}

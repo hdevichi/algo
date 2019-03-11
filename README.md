@@ -9,8 +9,8 @@ Comparisons : Sudoku Solver runs in about
 | ------------- |:-------------:| -----:|
 | Python 3.6    | 50 ms (48-52) | 35 ms |
 | Java 11       | 7ms sec (5-9)  | 2 - 4 ms  |
-| Go 1.10       | 550  µs (500 - 800)| 420 µs (410 - 440)|
-| Rust 1.33     | 450 µs (450-900) | 250 µs |
+| Go 1.10       |  ?| 330 µs (310 - 340)|
+| Rust 1.33     | 450 µs (450-900) | 200 µs |
 
 
  To run from command line : 

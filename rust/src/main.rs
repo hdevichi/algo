@@ -135,9 +135,6 @@ fn solve(board : &mut Sudoku) {
 
 fn recursive_solve(board : &mut Sudoku) -> bool {
 
-	if is_valid(board) == false {
-		return false;
-	}
 
 	if board.empty == 0 {
 		return true;

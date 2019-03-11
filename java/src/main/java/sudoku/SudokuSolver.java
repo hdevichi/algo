@@ -11,10 +11,7 @@ public class SudokuSolver {
 	
 	public static void main(String[] args) {
 		
-		Board b = ExempleBoards.getBoardVeryHard1();
-		launchSolver(b);
-		
-		b = ExempleBoards.getBoardHardest();
+		Board b = ExempleBoards.getBoardTimingSample();
 		launchSolver(b);
 		
 	}
@@ -23,21 +20,27 @@ public class SudokuSolver {
 		List<Move> moves= new ArrayList<>();
 		SudokuSolver s = new SudokuSolver();
 		
-		long time = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
+		long start2 = System.nanoTime();
+
 		s.solver(moves,b, false);
-		long time2 = System.currentTimeMillis();
-		System.out.println("Time: "+(time2-time)+" ms, "+s.getPositions()+" positions.");
+		long end2 = System.nanoTime();
+		long end = System.currentTimeMillis();
+		
+		System.out.println("Time: "+(end-start)+" ms, "+s.getPositions()+" positions.");
+		System.out.println("Time: "+(end2-start2)/1000+" µs");
+		
+		System.out.println();
 	}
 	
-	//TODO finished is useless? 
-	private void solver(List<Move> moves, Board board, boolean finished) {
+	private boolean solver(List<Move> moves, Board board, boolean finished) {
 		
 		positions++;
 		
-		if ( isValid(board) ) {
+		if ( isFullAndValid(board) ) {
 			System.out.println("Initial free cells: "+moves.size());
 			System.out.println(board);
-			return;
+			return true;
 		}
 		
 		Move next = getMostConstrainedCell(board);
@@ -51,15 +54,16 @@ public class SudokuSolver {
 			next.setValue(i);
 			moves.add(next);
 			board.add(next);
-			solver(moves, board, finished);
+			finished = solver(moves, board, finished);
 			if (finished)
-				return;
+				return finished;
 			board.remove(next);
 			moves.remove(next);
 		}
+		return false;
 	}
 	
-	private boolean isValid(Board board) {
+	private boolean isFullAndValid(Board board) {
 
 		// lines & columns
 		for (int i = 0 ; i < board.getSize(); i++) {
@@ -76,19 +80,18 @@ public class SudokuSolver {
 		}
 		
 		// subboards
-		for (int bx = 0 ; bx < 3; bx++) {
-			for (int by = 0 ; by < 3; by++) {
-					
-				int sumSubBoard =0;
-				for (int i = 0 ; i < 3; i ++) {
-					for (int j = 0 ; j < 3 ; j++) {
-						sumSubBoard += board.get(bx*3+i, by*3+j);
-					}
+		for (int b = 0 ; b < 9; b++) {
+	
+			int sumSubBoard =0;
+			for (int i = 0 ; i < 3; i ++) {
+				for (int j = 0 ; j < 3 ; j++) {
+					sumSubBoard += board.get( (b%3)*3+i, (b/3)*3+j);
 				}
-				if (sumSubBoard != 45)
-					return false;
 			}
+			if (sumSubBoard != 45)
+				return false;
 		}
+		
 		
 		return true;
 		
@@ -102,7 +105,9 @@ public class SudokuSolver {
 		
 		Move[] freeCells = board.getFree();
 		for (Move freeCell : freeCells) {
-			int cons = getConstraintsOnCell(board, freeCell.getX(), freeCell.getY());
+			Set<Integer> constraints = getConstraintListOnCell(board, freeCell);
+			freeCell.setConstraints(constraints);
+			int cons = constraints.size();
 			if (cons > mostConstraint) {
 				mostConstraint = cons;
 				mostConstrained = freeCell;
@@ -114,8 +119,7 @@ public class SudokuSolver {
 	
 	private int[] getValidCandidates(Board board, Move move) {
 		
-		// TODO calculé 2 fois
-		Set<Integer> constraints = getConstraintListOnCell(board, move.getX(), move.getY());
+		Set<Integer> constraints = move.getConstraints();
 		
 		int[] possible = new int[9-constraints.size()];
 		int k = 0;
@@ -126,27 +130,22 @@ public class SudokuSolver {
 			}
 		}
 		
-		// TODO optimization: 
-		// remove ones that invalidate the board
 		return possible;
 	}
 	
 	// cell must be empty
-	private Set<Integer> getConstraintListOnCell(Board board, int x, int y) {
-		
-		if (board.get(x,y) != 0)
-			throw new RuntimeException();
+	private Set<Integer> getConstraintListOnCell(Board board, Move cell) {
 		
 		Set<Integer> constraints = new HashSet<>();
 		for (int i = 0 ; i < board.getSize() ; i++) {
-			if (board.get(x, i) != 0)
-				constraints.add( board.get(x,i) );
-			if (board.get(i, y) != 0)
-				constraints.add( board.get(i,y) );
+			if (board.get(cell.getX(), i) != 0)
+				constraints.add(new Integer(board.get(cell.getX(),i)));
+			if (board.get(i, cell.getY()) != 0)
+				constraints.add(new Integer(board.get(i,cell.getY())));
 		}
 		
-		int bx = x / 3;
-		int by = y / 3;
+		int bx = cell.getX() / 3;
+		int by = cell.getY() / 3;
 		for (int i = 0 ; i < 3; i ++) {
 			for (int j = 0 ; j < 3 ; j++) {
 				if (board.get(bx*3+i, by*3+j) != 0)
@@ -154,10 +153,6 @@ public class SudokuSolver {
 			}
 		}
 		return constraints;
-	}
-	
-	private int getConstraintsOnCell(Board board, int x, int y ) {
-		return getConstraintListOnCell(board, x, y).size();
 	}
 	
 	public long getPositions() {

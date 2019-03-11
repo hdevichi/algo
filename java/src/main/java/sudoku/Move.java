@@ -1,10 +1,13 @@
 package sudoku;
 
+import java.util.Set;
+
 public class Move {
 
 	private int x;
 	private int y;
 	private int value;
+	private Set<Integer> constraints;
 	
 	public Move(int x, int y) {
 		this.x = x;
@@ -12,6 +15,13 @@ public class Move {
 		value = -1;
 	}
 	
+	public Set<Integer> getConstraints() {
+		return constraints;
+	}
+	public void setConstraints(Set<Integer> constraints) {
+		this.constraints = constraints;
+	}
+
 	public int getX() {
 		return x;
 	}
@@ -29,9 +39,9 @@ public class Move {
 	}
 	public void setValue(int value) {
 		if (value < 0)
-			throw new RuntimeException();
+			throw new InvalidBoardException();
 		if (value > 9)
-			throw new RuntimeException();
+			throw new InvalidBoardException();
 		
 		this.value = value;
 	}

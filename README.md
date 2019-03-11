@@ -8,7 +8,7 @@ Comparisons : Sudoku Solver runs in about
 | Language      | Mac (mac book pro 13'' 2016) | PC (core i7 8th gen) |
 | ------------- |:-------------:| -----:|
 | Python 3.6    | 50 ms (48-52) | 35 ms |
-| Java 11       | 15ms sec (12-17)  | 2 - 6 ms  |
+| Java 11       | 7ms sec (5-9)  | ?  |
 | Go 1.10       | 550  µs (500 - 800)| 420 µs (410 - 440)|
 | Rust 1.33     | 450 µs (450-900) | 250 µs |
 

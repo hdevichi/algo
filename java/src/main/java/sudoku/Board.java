@@ -16,9 +16,9 @@ public class Board {
 		for (int i = 0 ; i < values.length; i++) {
 			for (int j = 0; j < values.length ; j++) {
 				if (values[i][j] <0)
-					throw new RuntimeException();
+					throw new InvalidBoardException();
 				if (values[i][j] >9)
-					throw new RuntimeException();
+					throw new InvalidBoardException();
 				if (values[i][j] !=0)
 					freecells--;
 			}

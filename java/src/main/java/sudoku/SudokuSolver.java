@@ -20,10 +20,16 @@ public class SudokuSolver {
 		List<Move> moves= new ArrayList<Move>();
 		SudokuSolver s = new SudokuSolver();
 		
-		long time = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
+		long start2 = System.nanoTime();
+
 		s.solver(moves,b, false);
-		long time2 = System.currentTimeMillis();
-		System.out.println("Time: "+(time2-time)+" ms, "+s.getPositions()+" positions.");
+		long end2 = System.nanoTime();
+		long end = System.currentTimeMillis();
+		
+		System.out.println("Time: "+(end-start)+" ms, "+s.getPositions()+" positions.");
+		System.out.println("Time: "+(end2-start2)/1000+" µs");
+		
 		System.out.println();
 	}
 	

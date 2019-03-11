@@ -39,9 +39,9 @@ public class Move {
 	}
 	public void setValue(int value) {
 		if (value < 0)
-			throw new RuntimeException();
+			throw new InvalidBoardException();
 		if (value > 9)
-			throw new RuntimeException();
+			throw new InvalidBoardException();
 		
 		this.value = value;
 	}

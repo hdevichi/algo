@@ -70,19 +70,18 @@ public class SudokuSolver {
 		}
 		
 		// subboards
-		for (int bx = 0 ; bx < 3; bx++) {
-			for (int by = 0 ; by < 3; by++) {
-					
-				int sumSubBoard =0;
-				for (int i = 0 ; i < 3; i ++) {
-					for (int j = 0 ; j < 3 ; j++) {
-						sumSubBoard += board.get(bx*3+i, by*3+j);
-					}
+		for (int b = 0 ; b < 9; b++) {
+	
+			int sumSubBoard =0;
+			for (int i = 0 ; i < 3; i ++) {
+				for (int j = 0 ; j < 3 ; j++) {
+					sumSubBoard += board.get( (b%3)*3+i, (b/3)*3+j);
 				}
-				if (sumSubBoard != 45)
-					return false;
 			}
+			if (sumSubBoard != 45)
+				return false;
 		}
+		
 		
 		return true;
 		
@@ -125,9 +124,6 @@ public class SudokuSolver {
 	
 	// cell must be empty
 	private Set<Integer> getConstraintListOnCell(Board board, Move cell) {
-		
-		if (board.get(cell.getX(),cell.getY()) != 0)
-			throw new RuntimeException();
 		
 		Set<Integer> constraints = new HashSet<Integer>();
 		for (int i = 0 ; i < board.getSize() ; i++) {

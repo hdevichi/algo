@@ -155,8 +155,9 @@ public class SelfReproducingCode {
 									if (source[j].charAt(k) == 34) {
 										fw.write((char)92);
 										fw.write((char)34);
-									} else 
+									} else {
 										fw.write(source[j].charAt(k));
+									}
 								}
 							}
 							fw.write((char)34);

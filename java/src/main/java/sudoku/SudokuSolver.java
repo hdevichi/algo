@@ -29,8 +29,6 @@ public class SudokuSolver {
 		
 		System.out.println("Time: "+(end-start)+" ms, "+s.getPositions()+" positions.");
 		System.out.println("Time: "+(end2-start2)/1000+" µs");
-		
-		System.out.println();
 	}
 	
 	private boolean solver(List<Move> moves, Board board, boolean finished) {
@@ -44,9 +42,8 @@ public class SudokuSolver {
 		}
 		
 		Move next = getMostConstrainedCell(board);
-		
 		if (next == null) {
-			return;
+			return false;
 		}
 
 		int[] candidates = getValidCandidates(board, next);
@@ -117,7 +114,7 @@ public class SudokuSolver {
 		return mostConstrained;
 	}
 	
-	private int[] getValidCandidates(Board board, Move move) {
+	private int[] getValidCandidates(Move move) {
 		
 		Set<Integer> constraints = move.getConstraints();
 		
@@ -139,9 +136,9 @@ public class SudokuSolver {
 		Set<Integer> constraints = new HashSet<>();
 		for (int i = 0 ; i < board.getSize() ; i++) {
 			if (board.get(cell.getX(), i) != 0)
-				constraints.add(new Integer(board.get(cell.getX(),i)));
+				constraints.add( board.get(cell.getX(),i)) );
 			if (board.get(i, cell.getY()) != 0)
-				constraints.add(new Integer(board.get(i,cell.getY())));
+				constraints.add( board.get(i,cell.getY())) );
 		}
 		
 		int bx = cell.getX() / 3;

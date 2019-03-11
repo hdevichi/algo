@@ -11,7 +11,7 @@ package reproducing;
 public abstract class AbstractSelfReproducing {
 	
 	// Internal use - do not modify
-	protected static final int _GENERATION = 0;
+	protected static final int GENERATION = 0;
 	
 	/**
 	 * That method will be called by the main method of the
@@ -33,7 +33,7 @@ public abstract class AbstractSelfReproducing {
 	public static void doMain(String[] args) {
 	}
 	
-	protected boolean shouldReproduce(String[] args) {
+	protected boolean shouldReproduce() {
 		return true;
 	}
 }

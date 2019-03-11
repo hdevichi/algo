@@ -117,7 +117,7 @@ public class MakeReproducing {
 		
 		String inputClass = "";
 		String className ="";
-		/*
+		
 		// Retrieve name of file to open
 		Display display = new Display ();
 		Shell shell = new Shell (display);
@@ -130,7 +130,7 @@ public class MakeReproducing {
 			dialog.setFilterPath(args[0]);
 		dialog.open();
 		if (dialog.getFileName().length() == 0) {
-			System.out.println("Aborting.");
+			LOGGER.info("Aborting.");
 			return;
 		}
 		className = dialog.getFileName();
@@ -138,13 +138,13 @@ public class MakeReproducing {
 		inputClass = dialog.getFilterPath()+"\\"+dialog.getFileName();
 		shell.dispose();
 		display.dispose ();
-*/
-		System.out.println("Treating file: "+inputClass);
+
+		LOGGER.debug("Treating file: "+inputClass);
 		
 		// Check file existence
 		File f = new File(inputClass);
 		if (!f.exists()) {
-			System.out.println("File: "+inputClass+" not found!");
+			LOGGER.error("File: "+inputClass+" not found!");
 			return;
 		}
 		
@@ -156,7 +156,7 @@ public class MakeReproducing {
 		      source.addElement(s);
 		    }
 		} catch (IOException e) {
-			System.out.println("Error reading file: "+inputClass);
+			LOGGER.error("Error reading file: "+inputClass);
 			return;
 		} 
 		
@@ -166,18 +166,19 @@ public class MakeReproducing {
 		try {
 			fw = new FileWriter(outputName);
 		} catch (IOException e) {
-			System.out.println("Error opening output file.");
+			LOGGER.error("Error opening output file.");
 			return;
 		} finally {
 			try {
 				if (fw != null)
 					fw.close();
 			}	catch (IOException e) {
+				LOGGER.error(e);
 			}
 		}
 		
 		// Do the magic
-		System.out.println("Output to: "+outputName);
+		LOGGER.debug("Output to: "+outputName);
 		
 		// Assuming the class start on the first { that is not commented,
 		// find the start of the class
@@ -223,7 +224,7 @@ public class MakeReproducing {
 		}
 		
 		if (classBeginIndex == (source.size() - 1)) {
-			System.out.println("No class definition found in file.");
+			LOGGER.warn("No class definition found in file.");
 			return;
 		} else {
 			// modify class name in the source
@@ -237,10 +238,10 @@ public class MakeReproducing {
 			writeSelfGeneratingClass(fw,source,classBeginIndex);
 			fw.close();
 		} catch (IOException e) {
-			System.out.println("Error writing output.");
+			LOGGER.error("Error writing output.");
 		}
 		
-		System.out.println("Done.");
+		LOGGER.debug("Done.");
 		
 	}
 	
@@ -277,7 +278,7 @@ public class MakeReproducing {
 		}
 		// find index of last } (it won't be printed)
 		int classEndIndex = source.size()-1;
-		while ( ((String)source.elementAt(classEndIndex)).indexOf("}") == -1) {
+		while ( ((String)source.elementAt(classEndIndex)).indexOf('}') == -1) {
 			classEndIndex--;
 		}
 		
@@ -287,7 +288,7 @@ public class MakeReproducing {
 			fw.write(line);
 			fw.write((char)13);
 			if (currentLine == lastImportIndex) {
-				if (needImportFile | needImportFileWriter | needImportIOException ) {
+				if (needImportFile || needImportFileWriter || needImportIOException ) {
 					fw.write("// Imports added by MakeReproducing");
 					fw.write((char)13);
 				}

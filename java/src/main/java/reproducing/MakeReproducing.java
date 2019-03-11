@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 // TODO optimize. reduce number of loops; use something faster than vect?
@@ -118,6 +119,7 @@ public class MakeReproducing {
 		String inputClass = "";
 		String className ="";
 		
+		/*
 		// Retrieve name of file to open
 		Display display = new Display ();
 		Shell shell = new Shell (display);
@@ -138,13 +140,13 @@ public class MakeReproducing {
 		inputClass = dialog.getFilterPath()+"\\"+dialog.getFileName();
 		shell.dispose();
 		display.dispose ();
-
-		LOGGER.debug("Treating file: "+inputClass);
+*/
+		LOGGER.log(Level.INFO,"Treating file: "+inputClass);
 		
 		// Check file existence
 		File f = new File(inputClass);
 		if (!f.exists()) {
-			LOGGER.error("File: "+inputClass+" not found!");
+			LOGGER.log(Level.SEVERE,"File: "+inputClass+" not found!");
 			return;
 		}
 		
@@ -156,7 +158,7 @@ public class MakeReproducing {
 		      source.addElement(s);
 		    }
 		} catch (IOException e) {
-			LOGGER.error("Error reading file: "+inputClass);
+			LOGGER.log(Level.SEVERE,"Error reading file: "+inputClass);
 			return;
 		} 
 		
@@ -166,19 +168,19 @@ public class MakeReproducing {
 		try {
 			fw = new FileWriter(outputName);
 		} catch (IOException e) {
-			LOGGER.error("Error opening output file.");
+			LOGGER.log(Level.SEVERE,"Error opening output file.");
 			return;
 		} finally {
 			try {
 				if (fw != null)
 					fw.close();
 			}	catch (IOException e) {
-				LOGGER.error(e);
+				LOGGER.log(Level.SEVERE,e.getMessage());
 			}
 		}
 		
 		// Do the magic
-		LOGGER.debug("Output to: "+outputName);
+		LOGGER.log(Level.FINE,"Output to: "+outputName);
 		
 		// Assuming the class start on the first { that is not commented,
 		// find the start of the class
@@ -224,7 +226,7 @@ public class MakeReproducing {
 		}
 		
 		if (classBeginIndex == (source.size() - 1)) {
-			LOGGER.warn("No class definition found in file.");
+			LOGGER.log(Level.WARNING,"No class definition found in file.");
 			return;
 		} else {
 			// modify class name in the source
@@ -238,11 +240,10 @@ public class MakeReproducing {
 			writeSelfGeneratingClass(fw,source,classBeginIndex);
 			fw.close();
 		} catch (IOException e) {
-			LOGGER.error("Error writing output.");
+			LOGGER.log(Level.SEVERE,"Error writing output.");
 		}
 		
-		LOGGER.debug("Done.");
-		
+		LOGGER.log(Level.FINE,"Done.");
 	}
 	
 	// Replace in the string s all the delimitors by escaped ones

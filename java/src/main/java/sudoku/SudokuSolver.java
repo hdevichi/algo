@@ -11,7 +11,7 @@ public class SudokuSolver {
 	
 	public static void main(String[] args) {
 		
-		Board b = ExempleBoards.getBoardTimingSample();
+		Board b = ExempleBoards.getBoardHardest();
 		launchSolver(b);
 		
 	}
@@ -46,7 +46,7 @@ public class SudokuSolver {
 			return false;
 		}
 
-		int[] candidates = getValidCandidates(board, next);
+		int[] candidates = getValidCandidates(next);
 		for (int i : candidates) {
 			next.setValue(i);
 			moves.add(next);
@@ -136,9 +136,9 @@ public class SudokuSolver {
 		Set<Integer> constraints = new HashSet<>();
 		for (int i = 0 ; i < board.getSize() ; i++) {
 			if (board.get(cell.getX(), i) != 0)
-				constraints.add( board.get(cell.getX(),i)) );
+				constraints.add( board.get(cell.getX(),i) );
 			if (board.get(i, cell.getY()) != 0)
-				constraints.add( board.get(i,cell.getY())) );
+				constraints.add( board.get(i,cell.getY()) );
 		}
 		
 		int bx = cell.getX() / 3;

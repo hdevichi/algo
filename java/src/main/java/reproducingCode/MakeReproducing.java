@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 // TODO optimize. reduce number of loops; use something faster than vect?
 
@@ -25,6 +26,8 @@ import java.util.Vector;
  */
 public class MakeReproducing {
 	
+	private static final Logger LOGGER = Logger.getLogger( MakeReproducing.class.getName() );
+
 	// do we need to add import to the class
 	private static boolean needImportFile = true;
 	private static boolean needImportFileWriter = true;

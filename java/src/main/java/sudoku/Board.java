@@ -65,7 +65,7 @@ public class Board {
 	}
 	
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 	    for (int i= 0 ; i < size ; i++) {
 	    	if (i%3 == 0 )
 	    		sb.append(System.getProperty("line.separator"));

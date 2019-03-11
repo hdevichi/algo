@@ -9,13 +9,13 @@ public class Test {
 	
 	// Find if a string has all unique characters
 	
-	static int A = 65;
+	static int a = 65;
 	boolean allUnique(String s) {
 		
 		int[] countChar = new int[26];
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
-			countChar[c-A]++;
+			countChar[c-a]++;
 		}
 		for (int i = 0 ; i < countChar.length; i++) {
 			if (countChar[i] == 0) {
@@ -31,8 +31,8 @@ public class Test {
 		if (s.length() <= 1)
 			return s;
 		
-		StringBuffer sb = new StringBuffer(s);
-		StringBuffer result = new StringBuffer(s.length()); // erreur!! (manque length)
+		StringBuilder sb = new StringBuilder();
+		StringBuilder result = new StringBuilder(s.length()); // erreur!! (manque length)
 		for (int i = 0 ; i < s.length(); i++) {
 			int count = 0;
 			char c = sb.charAt(i);

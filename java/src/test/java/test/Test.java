@@ -5,7 +5,7 @@ package test;
 
 import java.io.File;
 
-import reproducingCode.AbstractSelfReproducing;
+import reproducing.AbstractSelfReproducing;
 
 public class Test extends AbstractSelfReproducing {
 	

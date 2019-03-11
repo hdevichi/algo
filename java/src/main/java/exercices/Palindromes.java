@@ -9,7 +9,7 @@ public class Palindromes {
 	
 	public static void main (String[] args) {
 		
-		int number = 122; //(int)Math.round(Math.random()*1000000);
+		int number = 122; // Exemple value, value to test
 		int number2 = number;
 		int reverse = 0;		
 		
@@ -32,7 +32,6 @@ public class Palindromes {
 		System.out.println("Palindrome: "+palindrome);
 	}
 
-
 	// corrigé: algo ok
 	// assumption string ok
 	// aurait du demander si negatif fonctionne
@@ -40,5 +39,4 @@ public class Palindromes {
 	// y a t'il des overflow dans la manipulation du reverse??
 	// on peut faire un tout petit plus concis. ( number = number-digit ne sert à rien si on divise par 10 ensuite ; et multiplier rev par 10 avant de sommer
 	//digit permet d'eviter le reverse += number final)
-
 }

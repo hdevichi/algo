@@ -20,16 +20,16 @@ public class SudokuSolver {
 	}
 	
 	private static void launchSolver(Board b) {
-		List<Move> moves= new ArrayList<Move>();
+		List<Move> moves= new ArrayList<>();
 		SudokuSolver s = new SudokuSolver();
 		
 		long time = System.currentTimeMillis();
 		s.solver(moves,b, false);
 		long time2 = System.currentTimeMillis();
 		System.out.println("Time: "+(time2-time)+" ms, "+s.getPositions()+" positions.");
-		System.out.println();
 	}
 	
+	//TODO finished is useless? 
 	private void solver(List<Move> moves, Board board, boolean finished) {
 		
 		positions++;
@@ -37,12 +37,15 @@ public class SudokuSolver {
 		if ( isValid(board) ) {
 			System.out.println("Initial free cells: "+moves.size());
 			System.out.println(board);
-			finished = true;
 			return;
 		}
 		
 		Move next = getMostConstrainedCell(board);
 		
+		if (next == null) {
+			return;
+		}
+
 		int[] candidates = getValidCandidates(board, next);
 		for (int i : candidates) {
 			next.setValue(i);
@@ -91,6 +94,7 @@ public class SudokuSolver {
 		
 	}
 	
+	// can be null, if board is full for instance
 	private Move getMostConstrainedCell(Board board) {
 		
 		int mostConstraint = 0;
@@ -116,8 +120,8 @@ public class SudokuSolver {
 		int[] possible = new int[9-constraints.size()];
 		int k = 0;
 		for (int i = 1 ; i <= 9 ; i++) {
-			if (!constraints.contains(new Integer(i))) {
-				possible[k]=new Integer(i);
+			if ( !constraints.contains(i) ) {
+				possible[k]= i;
 				k++;
 			}
 		}
@@ -133,12 +137,12 @@ public class SudokuSolver {
 		if (board.get(x,y) != 0)
 			throw new RuntimeException();
 		
-		Set<Integer> constraints = new HashSet<Integer>();
+		Set<Integer> constraints = new HashSet<>();
 		for (int i = 0 ; i < board.getSize() ; i++) {
 			if (board.get(x, i) != 0)
-				constraints.add(new Integer(board.get(x,i)));
+				constraints.add( board.get(x,i) );
 			if (board.get(i, y) != 0)
-				constraints.add(new Integer(board.get(i,y)));
+				constraints.add( board.get(i,y) );
 		}
 		
 		int bx = x / 3;
@@ -146,7 +150,7 @@ public class SudokuSolver {
 		for (int i = 0 ; i < 3; i ++) {
 			for (int j = 0 ; j < 3 ; j++) {
 				if (board.get(bx*3+i, by*3+j) != 0)
-					constraints.add(new Integer(board.get(bx*3+i, by*3+j)));
+					constraints.add( board.get(bx*3+i, by*3+j) );
 			}
 		}
 		return constraints;

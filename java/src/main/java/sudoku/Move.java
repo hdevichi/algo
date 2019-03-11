@@ -37,7 +37,7 @@ public class Move {
 	}
 	
 	public String toString() {
-		StringBuffer b = new StringBuffer();
+		StringBuilder b = new StringBuilder();
 		b.append('(').append(x).append(',').append(y).append(")->").append(value);
 		return b.toString();
 	}

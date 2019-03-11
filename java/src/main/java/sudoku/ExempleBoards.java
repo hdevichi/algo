@@ -2,6 +2,9 @@ package sudoku;
 
 public class ExempleBoards {
 
+	private ExempleBoards() {
+		throw new IllegalStateException("Utility class");
+	}
 
 	public static Board getBoardTimingSample() {
 
@@ -16,12 +19,8 @@ public class ExempleBoards {
 				{6, 3, 0, 9, 0, 0, 8, 4, 0},
 				{4, 0, 0, 3, 2, 0, 0, 5, 0}
 		};
-		Board b = new Board(values);
-		return b;
+		return new Board(values);
 	}
-
-	
-
 
 public static Board getBoardEasy1() {
 		
@@ -36,8 +35,7 @@ public static Board getBoardEasy1() {
 				{0, 0, 0, 0, 1, 0, 0, 0, 0},
 				{7, 6, 0, 3, 0, 8, 0, 9, 4}
 		};
-		Board b = new Board(values);
-		return b;
+		return new Board(values);
 	}
 	
 	public static Board getBoardHard1() {
@@ -55,8 +53,7 @@ public static Board getBoardEasy1() {
 				{0, 3, 0,   0, 2, 0, 0, 0, 1},
 				{6, 0, 0,   0, 1, 0, 0, 9, 0}
 		};
-		Board b = new Board(values);
-		return b;
+		return new Board(values);
 	}
 	
 public static Board getBoardVeryHard1() {
@@ -74,8 +71,7 @@ public static Board getBoardVeryHard1() {
 				{0, 6, 0,   0, 3, 8,   0, 0, 0},
 				{0, 0, 9,   7, 0, 0,   0, 0, 6}
 		};
-		Board b = new Board(values);
-		return b;
+		return new Board(values);
 	}
 
 	public static Board getBoardHardest() {
@@ -93,12 +89,10 @@ public static Board getBoardVeryHard1() {
 				{0, 0, 8,   5, 0, 0,   0, 1, 0},
 				{0, 9, 0,   0, 0, 0,   4, 0, 0}
 		};
-		Board b = new Board(values);
-		return b;
+		return new Board(values);
 	}
 
-	/*
-	public static Board getBoard() {
+	public static Board getEmptyBoard() {
 		
 		int[][] values = {
 				{0, 0, 0,   0, 0, 0,   0, 0, 0},
@@ -113,8 +107,6 @@ public static Board getBoardVeryHard1() {
 				{0, 0, 0,   0, 0, 0,   0, 0, 0},
 				{0, 0, 0,   0, 0, 0,   0, 0, 0}
 		};
-		Board b = new Board(values);
-		return b;
+		return new Board(values);
 	}
-	*/
 }

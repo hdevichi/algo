@@ -52,7 +52,7 @@ public class SacADos {
 			}
 		}
 		
-		List<Integer> liste = new ArrayList<Integer>();
+		List<Integer> liste = new ArrayList<>();
 		int poidsRestant = poidsSac;
 				// est ce que j'ai pris l'objet i?
 		for (int i = poidsObjets.length; i > 0; i--) {
@@ -80,7 +80,7 @@ public class SacADos {
 			if (poidsObjets[0] <= poidsSac)
 				return poidsObjets;
 			else
-				return null;
+				return new int[0];
 		}	
 	
 		int[] objetsCandidats = supprime(poidsObjets, 0);
@@ -101,14 +101,14 @@ public class SacADos {
 	public static int[] sacADos(int[] poidsObjets, int poidsSac) {
 		
 		if (poidsObjets.length == 0) {
-			return null;
+			return new int[0];
 		}
 		
 		if (poidsObjets.length == 1) {
 			if (poidsObjets[0] < poidsSac)
 				return poidsObjets;
 			else
-				return null;
+				return new int[0];
 		}
 		
 		if (poidsVecteur(poidsObjets) < poidsSac) 
@@ -156,7 +156,7 @@ public class SacADos {
 	
 	
 	private static int[] supprime(int[] vecteur, int indexASupprimer) {		
-		//if (indexASupprimer)  ..
+		
 		int[] objetsCandidats = new int[vecteur.length-1];
 		for (int j = 0 ; j < vecteur.length - 1 ; j++) {
 			if (j < indexASupprimer)

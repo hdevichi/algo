@@ -12,6 +12,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+
+        <sonar.projectKey>hdevichi_algo</sonar.projectKey>
+        <sonar.organization>hdevichi-github</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.login>bba062aac87a131cca022d1296ae0097b77bd86c</sonar.login>
     </properties>
 
     <build>

@@ -30,8 +30,8 @@ public class Quicksort {
 		liste.remove(indexPivot);
 			
 		// tri récursif
-		List<Comparable> inferieur = new ArrayList<Comparable>();
-		List<Comparable> superieur = new ArrayList<Comparable>();
+		List<Comparable> inferieur = new ArrayList<>();
+		List<Comparable> superieur = new ArrayList<>();
 		
 		for (Comparable c : liste) {
 			if (c.compareTo(pivot) > 0)		

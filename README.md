@@ -18,8 +18,8 @@ Comparisons : Sudoku Solver runs in about
  Java
  cd java
  mvn compile
- java -cp ./target/classes sudoku.SudokuSolver
-(ou mvn exec:java -Dexec.mainClass="sudoku.SudokuSolver")
+ mvn
+ (ou java -cp ./target/classes sudoku.SudokuSolver)
 
 Note: sous windows le sous-système linux semble plus rapide en ligne de commande.
 

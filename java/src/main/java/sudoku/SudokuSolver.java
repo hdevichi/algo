@@ -1,8 +1,6 @@
 package sudoku;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class SudokuSolver {
@@ -13,17 +11,16 @@ public class SudokuSolver {
 		
 		Board b = ExempleBoards.getBoardHardest();
 		launchSolver(b);
-		
 	}
 	
 	private static void launchSolver(Board b) {
-		List<Move> moves= new ArrayList<>();
+
 		SudokuSolver s = new SudokuSolver();
 		
 		long start = System.currentTimeMillis();
 		long start2 = System.nanoTime();
 
-		s.solver(moves,b, false);
+		s.solver(b, false);
 		long end2 = System.nanoTime();
 		long end = System.currentTimeMillis();
 		
@@ -31,12 +28,11 @@ public class SudokuSolver {
 		System.out.println("Time: "+(end2-start2)/1000+" µs");
 	}
 	
-	private boolean solver(List<Move> moves, Board board, boolean finished) {
+	private boolean solver(Board board, boolean finished) {
 		
 		positions++;
 		
 		if ( isFullAndValid(board) ) {
-			System.out.println("Initial free cells: "+moves.size());
 			System.out.println(board);
 			return true;
 		}
@@ -49,13 +45,11 @@ public class SudokuSolver {
 		int[] candidates = getValidCandidates(next);
 		for (int i : candidates) {
 			next.setValue(i);
-			moves.add(next);
 			board.add(next);
-			finished = solver(moves, board, finished);
+			finished = solver(board, finished);
 			if (finished)
 				return finished;
 			board.remove(next);
-			moves.remove(next);
 		}
 		return false;
 	}
@@ -94,6 +88,7 @@ public class SudokuSolver {
 		
 	}
 	
+	// TODO peut s'optimiser, au lieu de retourner un tableau de cells tester directement les valuers.
 	// can be null, if board is full for instance
 	private Move getMostConstrainedCell(Board board) {
 		

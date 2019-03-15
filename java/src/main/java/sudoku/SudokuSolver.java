@@ -15,17 +15,20 @@ public class SudokuSolver {
 	
 	private static void launchSolver(Board b) {
 
-		SudokuSolver s = new SudokuSolver();
-		
 		long start = System.currentTimeMillis();
 		long start2 = System.nanoTime();
 
-		s.solver(b, false);
+		for ( int i = 0 ; i < 10 ; i++ ) {
+
+			SudokuSolver s = new SudokuSolver();
+			s.solver(b, false);
+		}
+
 		long end2 = System.nanoTime();
 		long end = System.currentTimeMillis();
 		
-		System.out.println("Time: "+(end-start)+" ms, "+s.getPositions()+" positions.");
-		System.out.println("Time: "+(end2-start2)/1000+" µs");
+		System.out.println("Time: "+(end-start)/10+" ms"); //+s.getPositions()+" positions.");
+		System.out.println("Time: "+(end2-start2)/10000+" µs");	
 	}
 	
 	private boolean solver(Board board, boolean finished) {
@@ -88,21 +91,25 @@ public class SudokuSolver {
 		
 	}
 	
-	// TODO peut s'optimiser, au lieu de retourner un tableau de cells tester directement les valuers.
 	// can be null, if board is full for instance
 	private Move getMostConstrainedCell(Board board) {
 		
 		int mostConstraint = 0;
 		Move mostConstrained = null;
 		
-		Move[] freeCells = board.getFree();
-		for (Move freeCell : freeCells) {
-			Set<Integer> constraints = getConstraintListOnCell(board, freeCell);
-			freeCell.setConstraints(constraints);
-			int cons = constraints.size();
-			if (cons > mostConstraint) {
-				mostConstraint = cons;
-				mostConstrained = freeCell;
+		for (int i = 0 ; i < 9; i++) {
+			for (int j = 0; j < 9 ; j++) {
+
+				if (board.get(i,j) == 0) {
+	
+					Set<Integer> constraints = getConstraintListOnCell(board, i, j);
+					int cons = constraints.size();
+					if (cons > mostConstraint) {
+						mostConstraint = cons;
+						mostConstrained = new Move(i, j);
+						mostConstrained.setConstraints(constraints);
+					}
+				}
 			}
 		}
 		
@@ -126,18 +133,18 @@ public class SudokuSolver {
 	}
 	
 	// cell must be empty
-	private Set<Integer> getConstraintListOnCell(Board board, Move cell) {
+	private Set<Integer> getConstraintListOnCell(Board board, int x, int y ) {
 		
 		Set<Integer> constraints = new HashSet<>();
 		for (int i = 0 ; i < board.getSize() ; i++) {
-			if (board.get(cell.getX(), i) != 0)
-				constraints.add( board.get(cell.getX(),i) );
-			if (board.get(i, cell.getY()) != 0)
-				constraints.add( board.get(i,cell.getY()) );
+			if (board.get(x,i) != 0)
+				constraints.add( board.get(x,i) );
+			if (board.get(i, y) != 0)
+				constraints.add( board.get(i,y) );
 		}
 		
-		int bx = cell.getX() / 3;
-		int by = cell.getY() / 3;
+		int bx = x / 3;
+		int by = y / 3;
 		for (int i = 0 ; i < 3; i ++) {
 			for (int j = 0 ; j < 3 ; j++) {
 				if (board.get(bx*3+i, by*3+j) != 0)

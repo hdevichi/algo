@@ -48,22 +48,7 @@ public class Board {
 		freecells++;
 		values[move.getX()][move.getY()] = 0;
 	}
-	
-	public Move[] getFree() {
-		Move[] free = new Move[freecells];
-		int k = 0;
 		
-		for (int i = 0 ; i < values.length; i++) {
-			for (int j = 0; j < values.length ; j++) {
-				if (get(i,j) == 0) {
-					free[k] = new Move(i,j);
-					k++;
-				}
-			}
-		}
-		return free;
-	}
-	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 	    for (int i= 0 ; i < size ; i++) {

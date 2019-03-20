@@ -8,7 +8,7 @@ public class ExempleBoards {
 
 	public static Board getBoardTimingSample() {
 
-		int[][] values = {
+		byte[][] values = {
 				{0, 0, 0, 0, 0, 0, 0, 0, 0},
 				{9, 1, 4, 5, 7, 0, 0, 2, 6},
 				{5, 2, 8, 6, 0, 1, 4, 9, 0},
@@ -24,7 +24,7 @@ public class ExempleBoards {
 
 public static Board getBoardEasy1() {
 		
-		int[][] values = {
+		byte[][] values = {
 				{4, 1, 0, 8, 0, 3, 0, 6, 9},
 				{0, 0, 0, 0, 7, 0, 0, 0, 0},
 				{0, 7, 0, 5, 0, 6, 0, 2, 0},
@@ -40,7 +40,7 @@ public static Board getBoardEasy1() {
 	
 	public static Board getBoardHard1() {
 		
-		int[][] values = {
+		byte[][] values = {
 				{0, 5, 0,   0, 4, 0, 0, 0, 9},
 				{2, 0, 0,   0, 7, 0, 0, 3, 0},
 				{0, 0, 0,   6, 0, 0, 7, 8, 0},
@@ -58,7 +58,7 @@ public static Board getBoardEasy1() {
 	
 public static Board getBoardVeryHard1() {
 		
-		int[][] values = {
+		byte[][] values = {
 				{2, 0, 0,   0, 0, 7,   6, 0, 0},
 				{0, 0, 0,   9, 4, 0,   0, 1, 0},
 				{0, 0, 0,   2, 0, 0,   0, 7, 8},
@@ -76,7 +76,7 @@ public static Board getBoardVeryHard1() {
 
 	public static Board getBoardHardest() {
 		
-		int[][] values = {
+		byte[][] values = {
 				{8, 0, 0,   0, 0, 0,   0, 0, 0},
 				{0, 0, 3,   6, 0, 0,   0, 0, 0},
 				{0, 7, 0,   0, 9, 0,   2, 0, 0},
@@ -94,7 +94,7 @@ public static Board getBoardVeryHard1() {
 
 	public static Board getEmptyBoard() {
 		
-		int[][] values = {
+		byte[][] values = {
 				{0, 0, 0,   0, 0, 0,   0, 0, 0},
 				{0, 0, 0,   0, 0, 0,   0, 0, 0},
 				{0, 0, 0,   0, 0, 0,   0, 0, 0},

@@ -6,8 +6,8 @@ public class Move {
 
 	private int x;
 	private int y;
-	private int value;
-	private Set<Integer> constraints;
+	private byte value;
+	private Set<Byte> constraints;
 	
 	public Move(int x, int y) {
 		this.x = x;
@@ -15,10 +15,10 @@ public class Move {
 		value = -1;
 	}
 	
-	public Set<Integer> getConstraints() {
+	public Set<Byte> getConstraints() {
 		return constraints;
 	}
-	public void setConstraints(Set<Integer> constraints) {
+	public void setConstraints(Set<Byte> constraints) {
 		this.constraints = constraints;
 	}
 
@@ -34,10 +34,10 @@ public class Move {
 	public void setY(int y) {
 		this.y = y;
 	}
-	public int getValue() {
+	public byte getValue() {
 		return value;
 	}
-	public void setValue(int value) {
+	public void setValue(byte value) {
 		if (value < 0)
 			throw new InvalidBoardException();
 		if (value > 9)

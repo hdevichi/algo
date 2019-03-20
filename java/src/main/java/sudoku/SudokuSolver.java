@@ -18,17 +18,18 @@ public class SudokuSolver {
 		long start = System.currentTimeMillis();
 		long start2 = System.nanoTime();
 
-		for ( int i = 0 ; i < 10 ; i++ ) {
-
-			SudokuSolver s = new SudokuSolver();
-			s.solver(b, false);
-		}
+		
+		SudokuSolver s = new SudokuSolver();
+		s.solver(b, false);
+		
 
 		long end2 = System.nanoTime();
 		long end = System.currentTimeMillis();
 		
-		System.out.println("Time: "+(end-start)/10+" ms"); //+s.getPositions()+" positions.");
-		System.out.println("Time: "+(end2-start2)/10000+" µs");	
+		System.out.println("Time: "+(end-start)+" ms"); //+s.getPositions()+" positions.");
+		System.out.println("Time: "+(end2-start2)/1000+" µs");	
+
+		System.out.println(b);
 	}
 	
 	private boolean solver(Board board, boolean finished) {
@@ -36,7 +37,6 @@ public class SudokuSolver {
 		positions++;
 		
 		if ( isFullAndValid(board) ) {
-			System.out.println(board);
 			return true;
 		}
 		
@@ -45,8 +45,8 @@ public class SudokuSolver {
 			return false;
 		}
 
-		int[] candidates = getValidCandidates(next);
-		for (int i : candidates) {
+		byte[] candidates = getValidCandidates(next);
+		for (byte i : candidates) {
 			next.setValue(i);
 			board.add(next);
 			finished = solver(board, finished);
@@ -102,7 +102,7 @@ public class SudokuSolver {
 
 				if (board.get(i,j) == 0) {
 	
-					Set<Integer> constraints = getConstraintListOnCell(board, i, j);
+					Set<Byte> constraints = getConstraintListOnCell(board, i, j);
 					int cons = constraints.size();
 					if (cons > mostConstraint) {
 						mostConstraint = cons;
@@ -116,13 +116,13 @@ public class SudokuSolver {
 		return mostConstrained;
 	}
 	
-	private int[] getValidCandidates(Move move) {
+	private byte[] getValidCandidates(Move move) {
 		
-		Set<Integer> constraints = move.getConstraints();
+		Set<Byte> constraints = move.getConstraints();
 		
-		int[] possible = new int[9-constraints.size()];
+		byte[] possible = new byte[9-constraints.size()];
 		int k = 0;
-		for (int i = 1 ; i <= 9 ; i++) {
+		for (byte i = 1 ; i <= 9 ; i++) {
 			if ( !constraints.contains(i) ) {
 				possible[k]= i;
 				k++;
@@ -133,9 +133,9 @@ public class SudokuSolver {
 	}
 	
 	// cell must be empty
-	private Set<Integer> getConstraintListOnCell(Board board, int x, int y ) {
+	private Set<Byte> getConstraintListOnCell(Board board, int x, int y ) {
 		
-		Set<Integer> constraints = new HashSet<>();
+		Set<Byte> constraints = new HashSet<>();
 		for (int i = 0 ; i < board.getSize() ; i++) {
 			if (board.get(x,i) != 0)
 				constraints.add( board.get(x,i) );

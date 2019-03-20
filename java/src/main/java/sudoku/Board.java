@@ -3,10 +3,10 @@ package sudoku;
 public class Board {
 
 	int size;
-	int[][] values;
+	byte[][] values;
 	int freecells;
 	
-	public Board(int[][] values) {
+	public Board(byte[][] values) {
 		
 		// assume board is square
 		size = values.length;
@@ -34,7 +34,7 @@ public class Board {
 	}
 
 	// no check
-	public int get(int i, int j) {
+	public byte get(int i, int j) {
 		return values[i][j];
 	}
 	

@@ -92,6 +92,7 @@ public class SudokuSolver {
 	}
 	
 	// can be null, if board is full for instance
+	// complexity - n^3
 	private Move getMostConstrainedCell(Board board) {
 		
 		int mostConstraint = 0;
@@ -133,6 +134,7 @@ public class SudokuSolver {
 	}
 	
 	// cell must be empty
+	// complexity - n 
 	private Set<Byte> getConstraintListOnCell(Board board, int x, int y ) {
 		
 		Set<Byte> constraints = new HashSet<>();

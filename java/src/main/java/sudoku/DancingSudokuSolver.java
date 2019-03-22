@@ -144,18 +144,22 @@ public class DancingSudokuSolver {
 
         ColumnNode column = n.column;
         column.removeFromRow();
+        LOGGER.log(Level.INFO,"Removed from row : "+column);
 
         Node colNode = column.down;
-        System.out.println(colNode);
+   
         while (colNode != column) {
             Node rowNode = colNode.right;
-            System.out.println(rowNode);
+            
             while (rowNode != colNode) {
                 rowNode.removeFromColumn();
+                LOGGER.log(Level.INFO,"Removed from column : "+rowNode);
+
                 rowNode = rowNode.right;
             }
             colNode = colNode.down;
         }
+        LOGGER.log(Level.INFO, "Covered "+n.id);
    
     }
 
@@ -188,20 +192,28 @@ public class DancingSudokuSolver {
         // create all the columns, and link them (circularly)
         for (int i = 1 ; i <= matrix[0].length ; i++) {
             ColumnNode column = new ColumnNode(i);
-            column.x=i+1;
+            column.x=i;
+            column.y=0;
             columns[i-1].insertRight(column);
             columns[i] = column;
         }
 
         // parse the matrix ; if a 1 is found, insert it into the proper column, with its 4 links
-        for (int i = 0 ; i < matrix[0].length ; i++) {
+        for (int i = 0 ; i < matrix.length ; i++) {
             Node currentLine = null; 
-            for (int j = 0 ; j < matrix.length ; j++) {
-                if (matrix[j][i] != 0) {
+            for (int j = 0 ; j < matrix[0].length ; j++) {
+                if (matrix[i][j] != 0) {
                     Node node = new Node();
                     node.x = j+1;
                     node.y = i+1;
-                    columns[i+1].insertDown(node);
+                    ColumnNode column = columns[j+1];
+                    Node columnNode = column;
+                    if (columnNode.down != column) {
+                        while (columnNode.down.y < i) {
+                            
+                        }
+                    }
+                    columnNode.insertDown(node); // bug : a inserer au bon endroit dans la col...
                     if (currentLine != null) {
                         currentLine.insertRight(node);
                     } 

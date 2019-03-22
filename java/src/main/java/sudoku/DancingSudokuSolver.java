@@ -1,9 +1,12 @@
 package sudoku;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class DancingSudokuSolver {
@@ -11,8 +14,19 @@ public class DancingSudokuSolver {
     private static final int SUB_BOARD_SIZE = 3;
     private static final int BOARD_SIZE = SUB_BOARD_SIZE * SUB_BOARD_SIZE;
 	
-	private static final Logger LOGGER = Logger.getLogger( DancingSudokuSolver.class.getName() );
-	
+    private static Logger LOGGER = null;
+    
+    static {
+        InputStream stream = DancingSudokuSolver.class.getClassLoader().
+                getResourceAsStream("logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            LOGGER = Logger.getLogger(DancingSudokuSolver.class.getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public class Node {
         public int x;
         public int y;
@@ -58,7 +72,7 @@ public class DancingSudokuSolver {
 
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append("Col: "+column.id+" ("+x+","+y+")   ||   "+left.x+" < > "+right.x+" | "+up.y+" ^ v "+down.y);
+            builder.append("("+x+","+y+")         "+left.x+" < ("+x+") > "+right.x+" || "+up.y+" ^ ("+y+") v "+down.y);
             return builder.toString();
         }
     }
@@ -76,76 +90,122 @@ public class DancingSudokuSolver {
     }
 
 	public static void main(String[] args) {
-		
-		Board board = ExempleBoards.getBoardHardest();
         
         DancingSudokuSolver solver = new DancingSudokuSolver();
-        ColumnNode[] columns = solver.generateNodes();
+        
+        int[][] matrix = solver.generateTestCoverMatrix();
+        Node[] columns = solver.generateNodes(matrix);
+        System.out.println("Solving sample:");
+        printMatrix(matrix);
 
-        LOGGER.log(Level.INFO, "All set");
-        // cover parts of solution. 
-        solver.coverClues(columns, board);
-        LOGGER.log(Level.INFO, "Covered");
         // launch recursive solve
         Stack<Node> solution = new Stack<Node>();
-        solver.solve(columns[0], 0, solution, board);
+        boolean found = solver.solve(columns[0], solution);
+
+        if (found) {
+            solver.printMatrixSolution(solution, matrix);
+        } else {
+            System.out.println("No solution found.");
+        }
+
+        System.out.println();
+        System.out.println("Solving sample:");
+        Board board = ExempleBoards.getBoardHardest();
+        System.out.println(board);
+        matrix = solver.generateSudokuCoverMatrix();
+        columns = solver.generateNodes(matrix);
+        LOGGER.log(Level.FINE, "All set");
+        // cover parts of solution. 
+        solver.coverClues(columns, board);
+        LOGGER.log(Level.FINE, "Covered");
+        solution = new Stack<Node>();
+        found = solver.solve(columns[0], solution);
+        if (found) {
+            solver.printBoardSolution(solution, board);
+        } else {
+            System.out.println("No solution found.");
+        }
+        
     }    
     
-    private void coverClues(ColumnNode[] columns, Board board){
+    private void coverClues(Node[] columns, Board board){
 
-        for (int i = 0 ; i < BOARD_SIZE ; i++) {
-            for (int j=0; j < BOARD_SIZE; j++) {
-                int value = board.get(i,j);
+        for (int x = 0 ; x < BOARD_SIZE ; x++) {
+            for (int y=0; y < BOARD_SIZE; y++) {
+                int value = board.get(x,y);
                 if (value != 0) {
-                    cover(columns[j+1]);
+                    cover(columns[BOARD_SIZE*y+x+1]); // pas la bonne, on couvre 2 fois la même
                 } 
             }
         }
     }
 
-    private void solve(ColumnNode head, int index, Stack<Node> solution, Board board) {
-            
-        Node column = head.right;
-        if (column == head) {
-            printSolution(board, solution);
-            return;
+    private boolean solve(Node head, Stack<Node> solution) {
+        
+        if (head.right == head) {
+            return true;
         }
 
+        Node candidateColumn = head.right;
+        Node column = candidateColumn;
+        int maxSize = BOARD_SIZE*BOARD_SIZE*BOARD_SIZE*BOARD_SIZE;
+        while (candidateColumn != head) {
+            if (candidateColumn.column.size < maxSize) {
+                maxSize = candidateColumn.column.size;
+                column = candidateColumn;
+            }
+            candidateColumn = candidateColumn.right;
+        }
         cover(column.column);
 
-        // TODO optimization, choose c
         Node node = column.down;
         while (node != column) {
             solution.push(node);
             Node row = node.right;
             while (row != node) {
                 cover(row.column);
+                row = row.right;
             }
-            solve(head, index+1, solution, board);
+            boolean found = solve(head, solution);
+            if (found) {
+                return true;
+            }
             row = solution.pop();
             node = row.left;
             while (node != row) {
                 uncover(node.column);
+                node = node.left;
             }
+            node = node.down;
         }
 
         uncover(column.column);
-        return;
+        return false;
     }
 
-    private void printSolution(Board board, List<Node> solution) {
-        System.out.println(board);
-        System.out.println(solution);
+    private void printMatrixSolution( List<Node> solution, int[][] matrix) {
+        
+        System.out.println("Solution: ");
+        for (Node row : solution) {
+            printMatrixLine(row.y, matrix[row.y-1]);
+        }
     }
 
-    private void cover(ColumnNode n) {
+    private void printBoardSolution( List<Node> solution, Board board) {
+        
+        System.out.println("Solution: ");
+        for (Node row : solution) {
+            System.out.println(row.y);
+        }
+    }
 
-        LOGGER.log(Level.INFO, "Covering "+n.id);
+    private void cover(Node n) {
 
         ColumnNode column = n.column;
-        column.removeFromRow();
-        LOGGER.log(Level.INFO,"Removed from row : "+column);
+        //LOGGER.log(Level.INFO, "Covering "+column.id);
 
+        column.removeFromRow();
+        
         Node colNode = column.down;
    
         while (colNode != column) {
@@ -153,19 +213,18 @@ public class DancingSudokuSolver {
             
             while (rowNode != colNode) {
                 rowNode.removeFromColumn();
-                LOGGER.log(Level.INFO,"Removed from column : "+rowNode);
-
+                
                 rowNode = rowNode.right;
             }
             colNode = colNode.down;
         }
-        LOGGER.log(Level.INFO, "Covered "+n.id);
-   
+        //LOGGER.log(Level.INFO, "Covered "+column.id);
     }
 
     private void uncover(ColumnNode node) {
 
         ColumnNode column = node.column;
+        //LOGGER.log(Level.INFO, "Uncovering "+column.id);
 
         Node colNode = column.up;
         while (colNode != node) {
@@ -180,14 +239,12 @@ public class DancingSudokuSolver {
         column.left.insertRight(column);
     }
 
-    private ColumnNode[] generateNodes() {
+    private Node[] generateNodes(int[][] matrix) {
 
-        int[][] matrix = generateCoverMatrix();
-     
         // create parent column
         ColumnNode head = new ColumnNode(0);
 
-        ColumnNode[] columns = new ColumnNode[matrix[0].length+1];
+        Node[] columns = new Node[matrix[0].length+1];
         columns[0] = head;
         // create all the columns, and link them (circularly)
         for (int i = 1 ; i <= matrix[0].length ; i++) {
@@ -206,14 +263,9 @@ public class DancingSudokuSolver {
                     Node node = new Node();
                     node.x = j+1;
                     node.y = i+1;
-                    ColumnNode column = columns[j+1];
-                    Node columnNode = column;
-                    if (columnNode.down != column) {
-                        while (columnNode.down.y < i) {
-                            
-                        }
-                    }
-                    columnNode.insertDown(node); // bug : a inserer au bon endroit dans la col...
+                    Node column = columns[j+1];
+                    column.insertDown(node); // inserer au bon endroit dans la col...
+                    columns[j+1] = node;
                     if (currentLine != null) {
                         currentLine.insertRight(node);
                     } 
@@ -222,15 +274,13 @@ public class DancingSudokuSolver {
             }
         }
 
-
         return columns;
     }
 
-    private int[][] generateCoverMatrix() {
+    private int[][] generateSudokuCoverMatrix() {
         
         int[][] coverMatrix = new int[BOARD_SIZE*BOARD_SIZE*BOARD_SIZE][4*BOARD_SIZE*BOARD_SIZE];
 
-        
         // We populate the matrix (generic for a sudoku bard)
         // the lines are the different 'candidates' for each case, in the following order:
         // C1/1, C1/2, ... , C1/9, C2/1, ... Ci/j is the candidate 'j' in the square 'i' of the board
@@ -260,15 +310,33 @@ public class DancingSudokuSolver {
         return coverMatrix;
     }
     
+    private int[][] generateTestCoverMatrix() {
+        
+        int[][] coverMatrix = {
+            {0, 0, 1, 0, 1, 1, 0},
+            {1, 0, 0, 1, 0, 0, 1},
+            {0, 1, 1, 0, 0, 1, 0},
+            {1, 0, 0, 1, 0, 0, 0},
+            {0, 1, 0, 0, 0, 0, 1},
+            {0, 0, 0, 1, 1, 0, 1}
+        };
+
+        return coverMatrix;
+    }
+
     private static void printMatrix(int[][] matrix) {
         
-        System.out.println(matrix.length);
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + " ");
-            }
-            System.out.println();
-            System.out.println();
+        for (int i = 0; i < matrix.length ; i++) {
+                printMatrixLine(i+1, matrix[i]);
         }
+        System.out.println();
+    }
+
+    private static void printMatrixLine(int number, int[] line) {
+        System.out.print(number+" >    ");
+        for (int j = 0; j < line.length; j++) {
+            System.out.print(line[j] + " ");
+        }
+        System.out.println();
     }
 }

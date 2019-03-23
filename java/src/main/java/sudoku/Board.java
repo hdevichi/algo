@@ -48,8 +48,12 @@ public class Board {
 		freecells++;
 		values[move.getX()][move.getY()] = 0;
 	}
-		
-	public String toString() {
+	
+	public String toString() {	
+	    return generateString(false);
+	}
+
+	public String generateString(boolean showZeroes) {
 		StringBuilder sb = new StringBuilder();
 	    for (int i= 0 ; i < size ; i++) {
 			if (i == 3 || i == 6 ) {
@@ -57,9 +61,15 @@ public class Board {
 				sb.append(System.getProperty("line.separator"));
 			}
 	    	for (int j = 0 ; j < size ; j++) {
-	    		if (j == 3 || j == 6 )
-	    			sb.append("| ");
-	    		sb.append(values[i][j]);
+	    		if (j == 3 || j == 6 ) {
+						sb.append("| ");
+					}
+					if (values[i][j] != 0 || showZeroes) {
+						sb.append(values[i][j]);
+					} else {
+						sb.append(" ");
+						
+					}
     			sb.append(' ');
 	    	}
 	    	sb.append(System.getProperty("line.separator"));

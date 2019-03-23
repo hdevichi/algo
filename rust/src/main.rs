@@ -122,7 +122,13 @@ fn solve(board : &mut Sudoku) {
     	if result {
 			println!("Solution found !");
 			for y in 0..HEIGHT {
+				if  y == 3 || y == 6 {
+	            	println!("");
+				}
             	for x in 0..WIDTH {
+					if  x == 3 || x == 6 {
+	            	print!(" ");
+				}
 			    	print!("{} ",board.values[y * WIDTH + x]);
             	}
             	println!("");

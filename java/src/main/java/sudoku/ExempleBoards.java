@@ -92,7 +92,7 @@ public static Board getBoardVeryHard1() {
 		return new Board(values);
 	}
 
-	public static Board getEmptyBoard() {
+	public static Board getBoardEmpty() {
 		
 		byte[][] values = {
 				{0, 0, 0,   0, 0, 0,   0, 0, 0},

@@ -123,7 +123,7 @@ public class DancingSudokuSolver {
         Stack<Node>solution = new Stack<Node>();
         boolean found = solver.solve(columns[0], solution);
         if (found) {
-            solver.printBoardSolution(solution, board);
+            solver.printBoardSolution(solution);
         } else {
             System.out.println("No solution found.");
         }
@@ -187,8 +187,9 @@ public class DancingSudokuSolver {
         }
     }
 
-    private void printBoardSolution( List<Node> solution, Board board) {
+    private void printBoardSolution( List<Node> solution) {
         
+        Board board = ExempleBoards.getBoardEmpty();
         System.out.println("Solution: ");
         for (Node row : solution) {
             board.add(row.value);
@@ -301,6 +302,8 @@ public class DancingSudokuSolver {
                         // placing a digit satisfies 4 constraints : 
                         // unicity in the square
                         int[] line = new int[4*BOARD_SIZE*BOARD_SIZE];
+                        
+                        
                         line[y*BOARD_SIZE+x] = 1;
                         // position of the digit in line
                         line[BOARD_SIZE*BOARD_SIZE+y*BOARD_SIZE+digit] = 1;
@@ -317,13 +320,13 @@ public class DancingSudokuSolver {
                     // cell not empty
                     int col1 = y*BOARD_SIZE+x;
                     // position of the digit in column // constraint col x, digit is in pit
-                    int col2 = BOARD_SIZE*BOARD_SIZE+x*BOARD_SIZE+value-1;
+                    int col2 = BOARD_SIZE*BOARD_SIZE+y*BOARD_SIZE+value-1;
                     // position of the digit in line     
-                    int col3 = 2*BOARD_SIZE*BOARD_SIZE+y*BOARD_SIZE+value-1;
+                    int col3 = 2*BOARD_SIZE*BOARD_SIZE+x*BOARD_SIZE+value-1;
                     int subX = x / SUB_BOARD_SIZE;
                     int subY = y / SUB_BOARD_SIZE;
                     // position in subgrid
-                    int col4 = 3*BOARD_SIZE*BOARD_SIZE+SUB_BOARD_SIZE*(SUB_BOARD_SIZE*subY+subX)+value-1;
+                    int col4 = 3*BOARD_SIZE*BOARD_SIZE+BOARD_SIZE*(SUB_BOARD_SIZE*subX+subY)+value-1;
                     
                     line[col1] = 1;
                     line[col2] = 1; 
@@ -359,7 +362,7 @@ public class DancingSudokuSolver {
                     }
                 } else {
                     Move move = new Move(y, x);
-                    move.setValue((byte)0);
+                    move.setValue((byte)value);
                     headers.add(move);
                 }
             }

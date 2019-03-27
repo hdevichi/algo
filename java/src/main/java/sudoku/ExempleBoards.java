@@ -22,7 +22,7 @@ public class ExempleBoards {
 		return new Board(values);
 	}
 
-public static Board getBoardEasy1() {
+public static Board getBoardEasy() {
 		
 		byte[][] values = {
 				{4, 1, 0, 8, 0, 3, 0, 6, 9},
@@ -38,7 +38,7 @@ public static Board getBoardEasy1() {
 		return new Board(values);
 	}
 	
-	public static Board getBoardHard1() {
+	public static Board getBoardHard() {
 		
 		byte[][] values = {
 				{0, 5, 0,   0, 4, 0, 0, 0, 9},
@@ -56,7 +56,7 @@ public static Board getBoardEasy1() {
 		return new Board(values);
 	}
 	
-public static Board getBoardVeryHard1() {
+public static Board getBoardVeryHard() {
 		
 		byte[][] values = {
 				{2, 0, 0,   0, 0, 7,   6, 0, 0},

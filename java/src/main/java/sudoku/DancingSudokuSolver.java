@@ -35,6 +35,7 @@ public class DancingSudokuSolver {
         public Node up;
         public Node down;
         public ColumnNode column;
+        public Move value;
 
         public Node() {
             left = this;
@@ -59,14 +60,10 @@ public class DancingSudokuSolver {
             column.size = column.size +1;
         }
 
-        public void removeFromRow() {
-            left.right = this.right;
-            right.left = this.left;
-        }
-
         public void removeFromColumn() {
             up.down = this.down;
             down.up = this.up;
+            LOGGER.log(Level.FINE,"      Removing ("+x+","+y+") from column "+column.id);
             this.column.size = this.column.size - 1;
         }
 
@@ -80,6 +77,7 @@ public class DancingSudokuSolver {
     public class ColumnNode extends Node {
         public int id;
         public int size;
+        public Node[] columns;
 
         public ColumnNode(int id) {
             super();
@@ -87,14 +85,20 @@ public class DancingSudokuSolver {
             this.id = id;
             this.size = 0;
         }
+
+        public void removeFromColumnsRow() {
+            left.right = this.right;
+            right.left = this.left;
+        }
     }
 
 	public static void main(String[] args) {
         
         DancingSudokuSolver solver = new DancingSudokuSolver();
         
+        /*
         int[][] matrix = solver.generateTestCoverMatrix();
-        Node[] columns = solver.generateNodes(matrix);
+        Node[] columns = solver.generateNodes(matrix,board);
         System.out.println("Solving sample:");
         printMatrix(matrix);
 
@@ -107,19 +111,17 @@ public class DancingSudokuSolver {
         } else {
             System.out.println("No solution found.");
         }
-
+*/
         System.out.println();
         System.out.println("Solving sample:");
-        Board board = ExempleBoards.getBoardHardest();
+        Board board = ExempleBoards.getBoardEasy();
         System.out.println(board);
-        matrix = solver.generateSudokuCoverMatrix();
-        columns = solver.generateNodes(matrix);
-        LOGGER.log(Level.FINE, "All set");
-        // cover parts of solution. 
-        solver.coverClues(columns, board);
-        LOGGER.log(Level.FINE, "Covered");
-        solution = new Stack<Node>();
-        found = solver.solve(columns[0], solution);
+        int[][] matrix = solver.generateSudokuCoverMatrix(board);
+        //printMatrix(matrix);
+        Node[] columns = solver.generateNodes(matrix, board);
+        LOGGER.log(Level.FINE, "Matrix initialized.");
+        Stack<Node>solution = new Stack<Node>();
+        boolean found = solver.solve(columns[0], solution);
         if (found) {
             solver.printBoardSolution(solution, board);
         } else {
@@ -127,19 +129,12 @@ public class DancingSudokuSolver {
         }
         
     }    
-    
-    private void coverClues(Node[] columns, Board board){
 
-        for (int x = 0 ; x < BOARD_SIZE ; x++) {
-            for (int y=0; y < BOARD_SIZE; y++) {
-                int value = board.get(x,y);
-                if (value != 0) {
-                    cover(columns[BOARD_SIZE*y+x+1]); // pas la bonne, on couvre 2 fois la même
-                } 
-            }
-        }
-    }
+// arret sur covering 30 ko
+// 30 est couverte au passage de la ligne 174, atteinte via couv de 8
 
+// (pas de backtrack car on est dans les col de taille 1, les chfifres placés)
+// il y a un bug en gros en examinant les chiffres plaxés, il trouve une contrainte
     private boolean solve(Node head, Stack<Node> solution) {
         
         if (head.right == head) {
@@ -156,8 +151,9 @@ public class DancingSudokuSolver {
             }
             candidateColumn = candidateColumn.right;
         }
-        cover(column.column);
+        LOGGER.log(Level.FINE, "Choosing "+column.column.id+ " - size " + column.column.size);
 
+        cover(column.column); // au second passage, on couvre 24 qui a une longueur de 0
         Node node = column.down;
         while (node != column) {
             solution.push(node);
@@ -195,20 +191,25 @@ public class DancingSudokuSolver {
         
         System.out.println("Solution: ");
         for (Node row : solution) {
-            System.out.println(row.y);
+            board.add(row.value);
         }
+        System.out.println(board.toString());
     }
 
+
+    // quand on couvre 248 cela enleve un element dns 24 qui se retrouve taille 0 et provoque un fail de l'algo
+    // pas normal: colonne 24 a normalement 9 1  !!!!
     private void cover(Node n) {
 
         ColumnNode column = n.column;
-        //LOGGER.log(Level.INFO, "Covering "+column.id);
+        LOGGER.log(Level.FINE, "Covering "+column.id+ " - size " + column.size);
 
-        column.removeFromRow();
+        column.removeFromColumnsRow();
         
         Node colNode = column.down;
    
         while (colNode != column) {
+            LOGGER.log(Level.FINE, "   Treating row: "+colNode.y);    
             Node rowNode = colNode.right;
             
             while (rowNode != colNode) {
@@ -218,13 +219,12 @@ public class DancingSudokuSolver {
             }
             colNode = colNode.down;
         }
-        //LOGGER.log(Level.INFO, "Covered "+column.id);
     }
 
     private void uncover(ColumnNode node) {
 
         ColumnNode column = node.column;
-        //LOGGER.log(Level.INFO, "Uncovering "+column.id);
+        LOGGER.log(Level.FINE, "Uncovering "+column.id);
 
         Node colNode = column.up;
         while (colNode != node) {
@@ -239,8 +239,9 @@ public class DancingSudokuSolver {
         column.left.insertRight(column);
     }
 
-    private Node[] generateNodes(int[][] matrix) {
+    private Node[] generateNodes(int[][] matrix, Board board) {
 
+        List<Move> headers = generateSudokuRowHeaders(board);
         // create parent column
         ColumnNode head = new ColumnNode(0);
 
@@ -254,13 +255,16 @@ public class DancingSudokuSolver {
             columns[i-1].insertRight(column);
             columns[i] = column;
         }
+        head.columns = columns;
 
         // parse the matrix ; if a 1 is found, insert it into the proper column, with its 4 links
         for (int i = 0 ; i < matrix.length ; i++) {
             Node currentLine = null; 
+            Move move = headers.get(i);
             for (int j = 0 ; j < matrix[0].length ; j++) {
                 if (matrix[i][j] != 0) {
                     Node node = new Node();
+                    node.value = move;
                     node.x = j+1;
                     node.y = i+1;
                     Node column = columns[j+1];
@@ -277,10 +281,10 @@ public class DancingSudokuSolver {
         return columns;
     }
 
-    private int[][] generateSudokuCoverMatrix() {
+    private int[][] generateSudokuCoverMatrix(Board board) {
         
-        int[][] coverMatrix = new int[BOARD_SIZE*BOARD_SIZE*BOARD_SIZE][4*BOARD_SIZE*BOARD_SIZE];
-
+        List<int[]> coverMatrix = new ArrayList<int[]>();
+        
         // We populate the matrix (generic for a sudoku bard)
         // the lines are the different 'candidates' for each case, in the following order:
         // C1/1, C1/2, ... , C1/9, C2/1, ... Ci/j is the candidate 'j' in the square 'i' of the board
@@ -289,27 +293,80 @@ public class DancingSudokuSolver {
         // - a single occurence of each digit in each column
         // - a single occurnece in lines
         // - a single in sub boards
-        for (int x = 0 ; x < BOARD_SIZE ; x++) {
-            for (int y  = 0 ; y < BOARD_SIZE ; y++) {
-                for (int digit = 1 ; digit <= BOARD_SIZE ; digit++) {
-                // placing a digit satisfies 4 constraints : 
-                // unicity in the square
-                coverMatrix[(y*BOARD_SIZE+x)*BOARD_SIZE+digit-1][y*BOARD_SIZE+x] = 1;
-                // position of the digit in column // constraint col x, digit is in pit
-                coverMatrix[(y*BOARD_SIZE+x)*BOARD_SIZE+digit-1][BOARD_SIZE*BOARD_SIZE+x*BOARD_SIZE+digit] = 1;
-                // position of the digit in line
-                coverMatrix[(y*BOARD_SIZE+x)*BOARD_SIZE+digit-1][2*BOARD_SIZE*BOARD_SIZE+y*BOARD_SIZE+digit] = 1;
-                // position in subgrid
-                int subX = x / SUB_BOARD_SIZE;
-                int subY = y / SUB_BOARD_SIZE;
-                coverMatrix[(y*BOARD_SIZE+x)*BOARD_SIZE+digit-1][3*BOARD_SIZE*BOARD_SIZE+SUB_BOARD_SIZE*(SUB_BOARD_SIZE*subY+subX)+digit] = 1;
+        for (int y = 0 ; y < BOARD_SIZE ; y++) {
+            for (int x  = 0 ; x < BOARD_SIZE ; x++) {
+                int value = board.get(y,x);                
+                if (value == 0 ) {
+                    for (int digit = 0 ; digit < BOARD_SIZE ; digit++) {
+                        // placing a digit satisfies 4 constraints : 
+                        // unicity in the square
+                        int[] line = new int[4*BOARD_SIZE*BOARD_SIZE];
+                        line[y*BOARD_SIZE+x] = 1;
+                        // position of the digit in line
+                        line[BOARD_SIZE*BOARD_SIZE+y*BOARD_SIZE+digit] = 1;
+                        // position of the digit in column // constraint col x, digit is in pit
+                        line[2*BOARD_SIZE*BOARD_SIZE+x*BOARD_SIZE+digit] = 1;
+                        // position in subgrid
+                        int subX = x / SUB_BOARD_SIZE;
+                        int subY = y / SUB_BOARD_SIZE;
+                        line[3*BOARD_SIZE*BOARD_SIZE+BOARD_SIZE*(SUB_BOARD_SIZE*subX+subY)+digit] = 1;
+                        coverMatrix.add(line);
+                    }
+                } else {
+                    int[] line = new int[4*BOARD_SIZE*BOARD_SIZE];
+                    // cell not empty
+                    int col1 = y*BOARD_SIZE+x;
+                    // position of the digit in column // constraint col x, digit is in pit
+                    int col2 = BOARD_SIZE*BOARD_SIZE+x*BOARD_SIZE+value-1;
+                    // position of the digit in line     
+                    int col3 = 2*BOARD_SIZE*BOARD_SIZE+y*BOARD_SIZE+value-1;
+                    int subX = x / SUB_BOARD_SIZE;
+                    int subY = y / SUB_BOARD_SIZE;
+                    // position in subgrid
+                    int col4 = 3*BOARD_SIZE*BOARD_SIZE+SUB_BOARD_SIZE*(SUB_BOARD_SIZE*subY+subX)+value-1;
+                    
+                    line[col1] = 1;
+                    line[col2] = 1; 
+                    line[col3] = 1;
+                    line[col4] = 1;
+                    coverMatrix.add(line);
                 }
             }
         }
 
-        return coverMatrix;
+
+        int [][] matrixAsArray = new int[coverMatrix.size()][4*BOARD_SIZE*BOARD_SIZE];
+        for (int i = 0 ; i < coverMatrix.size(); i++) {
+            matrixAsArray[i] = coverMatrix.get(i);
+        }
+        
+        return matrixAsArray;
     }
-    
+
+    private List<Move> generateSudokuRowHeaders(Board board) {
+        
+        List<Move> headers = new ArrayList<Move>();
+        
+        // attention : must be same order as matrix generation
+        for (int y = 0 ; y < BOARD_SIZE ; y++) {
+            for (int x  = 0 ; x < BOARD_SIZE ; x++) {
+                int value = board.get(y,x);                
+                if (value == 0 ) {
+                    for (byte digit = 0 ; digit < BOARD_SIZE ; digit++) {
+                        Move move = new Move(y, x);
+                        move.setValue((byte)(digit+1));
+                        headers.add(move);
+                    }
+                } else {
+                    Move move = new Move(y, x);
+                    move.setValue((byte)0);
+                    headers.add(move);
+                }
+            }
+        }
+        return headers;
+    }
+
     private int[][] generateTestCoverMatrix() {
         
         int[][] coverMatrix = {
@@ -326,6 +383,7 @@ public class DancingSudokuSolver {
 
     private static void printMatrix(int[][] matrix) {
         
+        System.out.println(matrix.length+"*"+matrix[0].length);
         for (int i = 0; i < matrix.length ; i++) {
                 printMatrixLine(i+1, matrix[i]);
         }
@@ -333,9 +391,19 @@ public class DancingSudokuSolver {
     }
 
     private static void printMatrixLine(int number, int[] line) {
+        if (number <= 99 ) {
+            System.out.print(" ");
+        }
+        if (number <= 9 ) {
+            System.out.print(" ");
+        }
         System.out.print(number+" >    ");
         for (int j = 0; j < line.length; j++) {
-            System.out.print(line[j] + " ");
+            System.out.print(line[j]);
+            if ( (j+1) % (BOARD_SIZE*BOARD_SIZE) == 0) {
+                System.out.print(" ");
+            }
+           
         }
         System.out.println();
     }

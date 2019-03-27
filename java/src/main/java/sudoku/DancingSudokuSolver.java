@@ -96,9 +96,9 @@ public class DancingSudokuSolver {
         
         DancingSudokuSolver solver = new DancingSudokuSolver();
         
-        /*
+
         int[][] matrix = solver.generateTestCoverMatrix();
-        Node[] columns = solver.generateNodes(matrix,board);
+        Node[] columns = solver.generateNodes(matrix,null);
         System.out.println("Solving sample:");
         printMatrix(matrix);
 
@@ -111,22 +111,31 @@ public class DancingSudokuSolver {
         } else {
             System.out.println("No solution found.");
         }
-*/
+
+        long start = System.currentTimeMillis();
+        long start2 = System.nanoTime();
+
         System.out.println();
         System.out.println("Solving sample:");
-        Board board = ExempleBoards.getBoardEasy();
+        Board board = ExempleBoards.getBoardHardest();
         System.out.println(board);
-        int[][] matrix = solver.generateSudokuCoverMatrix(board);
+        matrix = solver.generateSudokuCoverMatrix(board);
         //printMatrix(matrix);
-        Node[] columns = solver.generateNodes(matrix, board);
+        columns = solver.generateNodes(matrix, board);
         LOGGER.log(Level.FINE, "Matrix initialized.");
-        Stack<Node>solution = new Stack<Node>();
-        boolean found = solver.solve(columns[0], solution);
+        solution = new Stack<Node>();
+        found = solver.solve(columns[0], solution);
         if (found) {
             solver.printBoardSolution(solution);
         } else {
             System.out.println("No solution found.");
         }
+
+        long end2 = System.nanoTime();
+        long end = System.currentTimeMillis();
+
+        System.out.println("Time: "+(end-start)+" ms"); //+s.getPositions()+" positions.");
+        System.out.println("Time: "+(end2-start2)/1000+" µs");	
         
     }    
 
@@ -240,9 +249,13 @@ public class DancingSudokuSolver {
         column.left.insertRight(column);
     }
 
+    // TODO more generic implementation. Add a PRoblem objet, 
+    // responsible for both adding the correct value to nodes, 
+    // and to interpret them in the solution.
     private Node[] generateNodes(int[][] matrix, Board board) {
 
         List<Move> headers = generateSudokuRowHeaders(board);
+        
         // create parent column
         ColumnNode head = new ColumnNode(0);
 
@@ -261,7 +274,10 @@ public class DancingSudokuSolver {
         // parse the matrix ; if a 1 is found, insert it into the proper column, with its 4 links
         for (int i = 0 ; i < matrix.length ; i++) {
             Node currentLine = null; 
-            Move move = headers.get(i);
+            Move move = null;
+            if (headers != null) {
+                move = headers.get(i);
+            }
             for (int j = 0 ; j < matrix[0].length ; j++) {
                 if (matrix[i][j] != 0) {
                     Node node = new Node();
@@ -348,6 +364,9 @@ public class DancingSudokuSolver {
 
     private List<Move> generateSudokuRowHeaders(Board board) {
         
+        if (board == null)
+            return null;
+
         List<Move> headers = new ArrayList<Move>();
         
         // attention : must be same order as matrix generation

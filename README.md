@@ -1,5 +1,7 @@
 # algo
+
 This project contains algorithmic exercises
+
 * self reproducing code
 * sudoku solver (in multiple languages)
 
@@ -12,8 +14,7 @@ Comparisons : Sudoku Solver runs in about
 | Go 1.10       |  ?| 330 µs (310 - 340)|
 | Rust 1.33     | 450 µs (450-900) | 200 µs |
 
-
- To run from command line : 
+ To run from command line :
 
  Java
  cd java
